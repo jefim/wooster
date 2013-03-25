@@ -12,6 +12,7 @@
         <KeyBinding Key="Escape" Command="{Binding DeactivateCommand}" />
     </Window.InputBindings>
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <ControlTemplate x:Key="TextBoxBaseControlTemplate" TargetType="{x:Type TextBoxBase}">
             <Border Background="{TemplateBinding Background}" 
                 x:Name="Bd" BorderBrush="Black"
@@ -32,37 +33,40 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
     </Window.Resources>
-    <Grid>
-
-        <Border BorderThickness="5" 
-                BorderBrush="{Binding Config.Theme.BorderBrush, FallbackValue=#777777}"
-                Background="{Binding Config.Theme.BorderBrush, FallbackValue=#777777}"
-                Margin="10"
-                CornerRadius="7"
-                x:Name="Border">
-            <Border.Effect>
-                <DropShadowEffect ShadowDepth="0" BlurRadius="9" />
-            </Border.Effect>
-            <TextBox x:Name="TextBox"
+    <Border BorderBrush="{Binding Config.Theme.BorderColor, FallbackValue=#777777}"
+            Background="{Binding Config.Theme.BorderColor, FallbackValue=#777777}"
+            Margin="10"
+            BorderThickness="5" 
+            CornerRadius="7">
+        <Border.Effect>
+            <DropShadowEffect ShadowDepth="0" BlurRadius="9" />
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border x:Name="Border">
+                <TextBox x:Name="TextBox"
                      Template="{StaticResource TextBoxBaseControlTemplate}"
                      BorderThickness="0"
                      FontSize="{Binding Config.Theme.FontSize, FallbackValue=30}"
                      Padding="7"
-                     Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}"/>
-        </Border>
+                     Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}"
+                     Background="{Binding Config.Theme.BackgroundColor, FallbackValue=#EEEEEE}" />
+            </Border>
 
-        <Popup Width="{Binding ActualWidth, ElementName=Border}" PlacementTarget="{Binding ElementName=Border}" IsOpen="{Binding IsPopupOpen}" Opened="Popup_Opened_1" AllowsTransparency="True">
-            <Grid>
-                <Border BorderBrush="{Binding Config.Theme.ActionListBorderBrush, FallbackValue=#777777}"
-                        BorderThickness="5"
-                        Margin="20,15,20,10"
+            <Grid Visibility="{Binding IsPopupOpen, Converter={StaticResource BoolToVis}}" Grid.Row="1" Margin="0,5,0,0">
+                <Border BorderBrush="{Binding Config.Theme.BorderColor, FallbackValue=#777777}"
+                        Background="{Binding Config.Theme.BorderColor, FallbackValue=#777777}"
+                        BorderThickness="0"
                         CornerRadius="7"
-                        MinHeight="30"
-                        Background="White">
-                    <Border.Effect>
-                        <DropShadowEffect ShadowDepth="0" BlurRadius="9" />
-                    </Border.Effect>
-                    <ListBox ItemsSource="{Binding AvailableActions}" BorderThickness="0">
+                        MinHeight="30">
+                    <ListBox ItemsSource="{Binding AvailableActions}"
+                             BorderThickness="0"
+                             AlternationCount="2"
+                             Background="{Binding Config.Theme.ActionListBackgroundColor, FallbackValue=#EEEEEE}"
+                             Foreground="{Binding Config.Theme.ActionListForegroundColor, FallbackValue=#333333}">
                         <ListBox.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
@@ -75,12 +79,19 @@
                         </ListBox.ItemTemplate>
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
-                                <Setter Property="FontSize" Value="{Binding DataContext.Config.Theme.ActionListFontSize, FallbackValue=26, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+                                <Setter Property="BorderBrush" Value="#DDDDDD" />
+                                <Setter Property="Padding" Value="5" />
+                                <Setter Property="FontSize" Value="{Binding DataContext.Config.Theme.ActionListFontSize, FallbackValue=22, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+                                <Style.Triggers>
+                                    <Trigger Property="ListBox.AlternationIndex" Value="1">
+                                        <Setter Property="Background" Value="{Binding DataContext.Config.Theme.ActionListAlternateBackgroundColor, FallbackValue=#FAFAFA, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"/>
+                                    </Trigger>
+                                </Style.Triggers>
                             </Style>
                         </ListBox.ItemContainerStyle>
                     </ListBox>
                 </Border>
             </Grid>
-        </Popup>
-    </Grid>
+        </Grid>
+    </Border>
 </Window>

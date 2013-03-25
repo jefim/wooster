@@ -52,8 +52,12 @@ namespace Wooster.Classes
             {
                 var actionName1 = "Act now: " + this.Query;
                 var actionName2 = "Fap now: " + this.Query;
+                var actionName3 = "Zuzizazaaaa: " + this.Query;
+                var actionName4 = "Minorabama: " + this.Query;
                 this.AvailableActions.Add(new WoosterAction(actionName1, () => Console.WriteLine(actionName1)));
                 this.AvailableActions.Add(new WoosterAction(actionName2, () => Console.WriteLine(actionName2)));
+                this.AvailableActions.Add(new WoosterAction(actionName3, () => Console.WriteLine(actionName3)));
+                this.AvailableActions.Add(new WoosterAction(actionName4, () => Console.WriteLine(actionName4)));
             }
 
             this.IsPopupOpen = this.AvailableActions.Count > 0;
