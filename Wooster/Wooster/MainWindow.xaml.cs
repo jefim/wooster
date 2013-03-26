@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,6 +47,11 @@ namespace Wooster
             this.Hide();
         }
 
+        void ListBoxItem_MouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            this._mainWindowViewModel.ExecuteActionCommand.Execute((sender as ListBoxItem).DataContext);
+        }
+
         void MainWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (this.IsVisible)
@@ -59,13 +65,8 @@ namespace Wooster
                 {
                     this._mainWindowViewModel.OnActivated();
                     Keyboard.Focus(this.TextBox);
-                }, DispatcherPriority.Render);
+                }, DispatcherPriority.Normal);
             }
-        }
-
-        private void Popup_Opened_1(object sender, EventArgs e)
-        {
-
         }
     }
 }

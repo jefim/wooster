@@ -32,6 +32,46 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
+        <Style x:Key="SettingsButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="18" />
+            <Setter Property="Height" Value="18" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Opacity" Value="0.5" />
+            <Setter Property="Content">
+                <Setter.Value>
+                    <Image Source="Graphics\cog.png" Width="14" Height="14" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <Image Source="Graphics\cog-light.png" Width="14" Height="14" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <Image Source="Graphics\cog-dark.png" Width="14" Height="14" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Border BorderBrush="{Binding Config.Theme.BorderColor, FallbackValue=#777777}"
             Background="{Binding Config.Theme.BorderColor, FallbackValue=#777777}"
@@ -47,13 +87,16 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Border x:Name="Border">
-                <TextBox x:Name="TextBox"
-                     Template="{StaticResource TextBoxBaseControlTemplate}"
-                     BorderThickness="0"
-                     FontSize="{Binding Config.Theme.FontSize, FallbackValue=30}"
-                     Padding="7"
-                     Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}"
-                     Background="{Binding Config.Theme.BackgroundColor, FallbackValue=#EEEEEE}" />
+                <Grid>
+                    <TextBox x:Name="TextBox"
+                             Template="{StaticResource TextBoxBaseControlTemplate}"
+                             BorderThickness="0"
+                             FontSize="{Binding Config.Theme.FontSize, FallbackValue=30}"
+                             Padding="7"
+                             Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}"
+                             Background="{Binding Config.Theme.BackgroundColor, FallbackValue=#EEEEEE}" />
+                    <Button Style="{StaticResource SettingsButtonStyle}" />
+                </Grid>
             </Border>
 
             <Grid Visibility="{Binding IsPopupOpen, Converter={StaticResource BoolToVis}}" Grid.Row="1" Margin="0,5,0,0">
@@ -66,7 +109,8 @@
                              BorderThickness="0"
                              AlternationCount="2"
                              Background="{Binding Config.Theme.ActionListBackgroundColor, FallbackValue=#EEEEEE}"
-                             Foreground="{Binding Config.Theme.ActionListForegroundColor, FallbackValue=#333333}">
+                             Foreground="{Binding Config.Theme.ActionListForegroundColor, FallbackValue=#333333}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
@@ -74,11 +118,12 @@
                         </ListBox.Resources>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
+                                <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
                                 <Setter Property="BorderBrush" Value="#DDDDDD" />
                                 <Setter Property="Padding" Value="5" />
                                 <Setter Property="FontSize" Value="{Binding DataContext.Config.Theme.ActionListFontSize, FallbackValue=22, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />

@@ -27,5 +27,10 @@ namespace Wooster.Classes
                 OnPropertyChanged("Name");
             }
         }
+
+        public void Execute()
+        {
+            this.Action();
+        }
     }
 }

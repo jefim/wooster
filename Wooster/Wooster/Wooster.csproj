@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -54,6 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\Actions\ProgramShortcutAction.cs" />
+    <Compile Include="Classes\Cache.cs" />
     <Compile Include="Classes\Config.cs" />
     <Compile Include="Classes\MainWindowViewModel.cs" />
     <Compile Include="Classes\Theme.cs" />
@@ -62,6 +65,7 @@
     <Compile Include="Utils\Keys.cs" />
     <Compile Include="Utils\Observable.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
+    <Compile Include="Utils\WindowsShortcut.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -101,6 +105,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Readme.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Graphics\cog-dark.png" />
+    <Resource Include="Graphics\cog-light.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Graphics\cog.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
