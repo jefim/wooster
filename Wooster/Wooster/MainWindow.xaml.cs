@@ -39,11 +39,17 @@ namespace Wooster
 
             this.IsVisibleChanged += MainWindow_IsVisibleChanged;
             this.Deactivated += MainWindow_Deactivated;
+            this.MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
 
             this.LoadNotificationIcon();
             TextBox.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(this.MainWindow_KeyDown), true);
 
             this.UpdatePositionOnScreen();
+        }
+
+        void MainWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
 
         private void UpdatePositionOnScreen()
