@@ -14,7 +14,10 @@ namespace Wooster.Classes
         public Config()
         {
             this.Theme = new Theme();
+            this.AutoSelectFirstAvailableAction = true;
         }
+
+        public bool AutoSelectFirstAvailableAction { get; set; }
 
         public Theme Theme { get; set; }
 

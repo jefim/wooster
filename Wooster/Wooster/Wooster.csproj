@@ -35,6 +35,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Deps\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Deps\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -61,8 +69,9 @@
     <Compile Include="Classes\Config.cs" />
     <Compile Include="Classes\MainWindowViewModel.cs" />
     <Compile Include="Classes\Theme.cs" />
-    <Compile Include="Classes\WoosterAction.cs" />
+    <Compile Include="Classes\Actions\WoosterAction.cs" />
     <Compile Include="Utils\Hotkey.cs" />
+    <Compile Include="Utils\IconExtensions.cs" />
     <Compile Include="Utils\Keys.cs" />
     <Compile Include="Utils\Observable.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
@@ -124,6 +133,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Graphics\mug.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Deps\Microsoft.WindowsAPICodePack.dll" />
+    <Content Include="Deps\Microsoft.WindowsAPICodePack.Shell.dll" />
+    <Content Include="Deps\Microsoft.WindowsAPICodePack.ShellExtensions.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

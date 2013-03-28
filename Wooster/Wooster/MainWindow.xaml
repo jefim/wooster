@@ -5,11 +5,13 @@
         WindowStyle="None"
         BorderThickness="0"
         AllowsTransparency="True"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="Manual"
         Background="Transparent"
         Topmost="True">
     <Window.InputBindings>
         <KeyBinding Key="Escape" Command="{Binding DeactivateCommand}" />
+        <KeyBinding Key="Down" Command="{Binding SelectNextActionCommand}" />
+        <KeyBinding Key="Up" Command="{Binding SelectPrevActionCommand}" />
     </Window.InputBindings>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
@@ -72,6 +74,35 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!--ListBoxItem control template-->
+        <ControlTemplate TargetType="ListBoxItem" x:Key="ListBoxItemControlTemplate">
+            <Grid>
+                <Rectangle Fill="{TemplateBinding Background}" x:Name="Background" />
+                <Rectangle Fill="#00FFFFFF" x:Name="Overlay" RadiusX="5" RadiusY="5" />
+                <ContentPresenter Margin="{TemplateBinding Padding}" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter TargetName="Overlay" Property="Fill" Value="{Binding DataContext.Config.Theme.SelectedActionBackgroundColor, FallbackValue=#FAFAFA, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+                    <Setter Property="Foreground" Value="{Binding DataContext.Config.Theme.SelectedActionForegroundColor, FallbackValue=#FAFAFA, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        
+        <!--ListBoxItem style-->
+        <Style TargetType="ListBoxItem" x:Key="ListBoxItemStyle">
+            <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="FontSize" Value="{Binding DataContext.Config.Theme.ActionListFontSize, FallbackValue=22, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+            <Setter Property="Template" Value="{StaticResource ListBoxItemControlTemplate}" />
+            <Style.Triggers>
+                <Trigger Property="ListBox.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="{Binding DataContext.Config.Theme.ActionListAlternateBackgroundColor, FallbackValue=#FAFAFA, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
     </Window.Resources>
     <Border BorderBrush="{Binding Config.Theme.BorderColor, FallbackValue=#777777}"
             Background="{Binding Config.Theme.BorderColor, FallbackValue=#777777}"
@@ -106,11 +137,14 @@
                         CornerRadius="7"
                         MinHeight="30">
                     <ListBox ItemsSource="{Binding AvailableActions}"
+                             SelectedItem="{Binding SelectedAction}"
                              BorderThickness="0"
                              AlternationCount="2"
                              Background="{Binding Config.Theme.ActionListBackgroundColor, FallbackValue=#EEEEEE}"
                              Foreground="{Binding Config.Theme.ActionListForegroundColor, FallbackValue=#333333}"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                             x:Name="ListBoxActions"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             ItemContainerStyle="{StaticResource ListBoxItemStyle}">
                         <ListBox.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
@@ -118,22 +152,25 @@
                         </ListBox.Resources>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition MaxWidth="37" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="{Binding Icon}" MaxWidth="32" Margin="0,0,5,0" x:Name="Image" />
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Grid.Column="1" />
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="True">
+                                        <Setter TargetName="Image" Property="BitmapEffect">
+                                            <Setter.Value>
+                                                <DropShadowBitmapEffect Color="White" ShadowDepth="0" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
-                                <Setter Property="BorderBrush" Value="#DDDDDD" />
-                                <Setter Property="Padding" Value="5" />
-                                <Setter Property="FontSize" Value="{Binding DataContext.Config.Theme.ActionListFontSize, FallbackValue=22, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
-                                <Style.Triggers>
-                                    <Trigger Property="ListBox.AlternationIndex" Value="1">
-                                        <Setter Property="Background" Value="{Binding DataContext.Config.Theme.ActionListAlternateBackgroundColor, FallbackValue=#FAFAFA, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
                     </ListBox>
                 </Border>
             </Grid>

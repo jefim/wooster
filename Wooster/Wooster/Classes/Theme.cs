@@ -15,6 +15,9 @@ namespace Wooster.Classes
         public string ActionListBackgroundColor { get; set; }
         public string ActionListForegroundColor { get; set; }
 
+        public string SelectedActionBackgroundColor { get; set; }
+        public string SelectedActionForegroundColor { get; set; }
+
         /// <summary>
         /// Gets or sets the color of alternating elements' background in the action list.
         /// (= every second action will have background painted with this color)
@@ -31,6 +34,9 @@ namespace Wooster.Classes
             this.ActionListBackgroundColor = "#EEEEEE";
             this.ActionListForegroundColor = "#333333";
             this.ActionListAlternateBackgroundColor = "#FAFAFA";
+
+            this.SelectedActionBackgroundColor = "#66BFFF";
+            this.SelectedActionForegroundColor = "#FFFFFF";
         }
     }
 }

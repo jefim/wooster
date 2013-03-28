@@ -40,6 +40,40 @@ namespace Wooster
             this.Deactivated += MainWindow_Deactivated;
 
             this.LoadNotificationIcon();
+            TextBox.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(this.MainWindow_KeyDown), true);
+
+            this.UpdatePositionOnScreen();
+        }
+
+        private void UpdatePositionOnScreen()
+        {
+            this.Left = (SystemParameters.PrimaryScreenWidth - this.Width) / 2;
+            this.Top = SystemParameters.PrimaryScreenHeight / 4;
+        }
+
+        void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Down)
+            {
+                var newIdx = this.ListBoxActions.SelectedIndex + 1;
+                if (newIdx >= this.ListBoxActions.Items.Count) newIdx = 0;
+                this.ListBoxActions.SelectedIndex = newIdx;
+                return;
+            }
+
+            if (e.Key == Key.Up)
+            {
+                var newIdx = this.ListBoxActions.SelectedIndex-1;
+                if (newIdx < 0) newIdx = this.ListBoxActions.Items.Count - 1;
+                this.ListBoxActions.SelectedIndex = newIdx;
+                return;
+            }
+
+            if (e.Key == Key.Enter)
+            {
+                this._mainWindowViewModel.ExecuteActionCommand.Execute(null);
+                return;
+            }
         }
 
         private void LoadNotificationIcon()
