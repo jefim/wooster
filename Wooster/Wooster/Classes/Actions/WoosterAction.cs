@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using System.Xml.Serialization;
 using Wooster.Utils;
 
 namespace Wooster.Classes.Actions
@@ -12,14 +13,21 @@ namespace Wooster.Classes.Actions
         private string _name;
         private ImageSource _icon;
 
+        public WoosterAction()
+        {
+            this.Name = string.Empty;
+        }
+
         public WoosterAction(string name, Action action)
         {
             this.Name = name;
             this.Action = action;
         }
 
+        [XmlIgnore]
         public Action Action { get; set; }
 
+        [XmlAttribute]
         public string Name
         {
             get { return this._name; }
@@ -36,6 +44,7 @@ namespace Wooster.Classes.Actions
             this.Action();
         }
 
+        [XmlIgnore]
         public ImageSource Icon
         {
             get { return this._icon; }

@@ -91,6 +91,7 @@ namespace Wooster.Utils
         {
             SHFILEINFO shinfo = new SHFILEINFO();
             SHGetFileInfo(filename, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), size);
+            if (shinfo.hIcon == IntPtr.Zero) return null;
             return Icon.FromHandle(shinfo.hIcon);
         }
 

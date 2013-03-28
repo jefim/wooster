@@ -15,13 +15,16 @@ namespace Wooster.Classes
         {
             this.Theme = new Theme();
             this.AutoSelectFirstAvailableAction = true;
+            this.MaxActionsShown = 10;
         }
 
         public bool AutoSelectFirstAvailableAction { get; set; }
 
+        public int MaxActionsShown { get; set; }
+
         public Theme Theme { get; set; }
 
-        public static string GetDefaultConfigPath()
+        private static string GetDefaultConfigPath()
         {
             var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var appFolder = "Wooster";
@@ -38,7 +41,7 @@ namespace Wooster.Classes
             }
         }
 
-        public static string GetRealConfigPath()
+        private static string GetRealConfigPath()
         {
             var userConfigPath = Properties.Settings.Default.ConfigFilePath;
             if (string.IsNullOrWhiteSpace(userConfigPath))

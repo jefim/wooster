@@ -18,15 +18,13 @@ namespace Wooster.Classes
         private RelayCommand _executeActionCommand;
         internal event EventHandler HideRequest;
         private WoosterAction _selectedAction;
-        private List<WoosterAction> _cachedActions = new List<WoosterAction>();
-        private List<WoosterAction> _defaultActions;
+        private Cache _cache;
 
         public MainWindowViewModel()
         {
             this.Config = Config.Load();
+            this._cache = Cache.Load();
             this.IsPopupOpen = false;
-            this._defaultActions = new List<WoosterAction> { new WoosterAction("Recache Wooster data", () => this.RecacheData()) };
-            this._cachedActions.AddRange(this._defaultActions);
             this.AvailableActions = new ObservableCollection<WoosterAction>();
         }
 
@@ -60,9 +58,9 @@ namespace Wooster.Classes
 
             if (!string.IsNullOrWhiteSpace(this.Query))
             {
-                this._cachedActions
+                this._cache.AllActions
                     .Where(o => o.Name.ToLower().Contains(this.Query.ToLower()))
-                    .OrderBy(o => o.Name)
+                    .Take(this.Config.MaxActionsShown)
                     .ToList()
                     .ForEach(o => this.AvailableActions.Add(o));
 
@@ -77,25 +75,7 @@ namespace Wooster.Classes
         
         private void RecacheData()
         {
-            this._cachedActions.Clear();
-            this._cachedActions.AddRange(this.RecacheProgramShortcutData());
-            this._cachedActions.AddRange(this._defaultActions);
-        }
-
-        private IEnumerable<ProgramShortcutAction> RecacheProgramShortcutData()
-        {
-            var result = new List<ProgramShortcutAction>();
-
-            var pathToUserStartMenu = Environment.ExpandEnvironmentVariables(@"%appdata%\Microsoft\Windows\Start Menu\Programs");
-            foreach (var file in Directory.EnumerateFiles(pathToUserStartMenu))
-            {
-                if (file.EndsWith(".lnk", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    result.Add(new ProgramShortcutAction(file));
-                }
-            }
-
-            return result;
+            this._cache.RecacheData();
         }
 
         internal void OnActivated()
