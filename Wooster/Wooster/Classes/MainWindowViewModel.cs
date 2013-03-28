@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,7 @@ namespace Wooster.Classes
         internal event EventHandler HideRequest;
         private WoosterAction _selectedAction;
         private Cache _cache;
+        private Calculator _calculator = new Calculator();
 
         public MainWindowViewModel()
         {
@@ -51,7 +53,7 @@ namespace Wooster.Classes
                 this.RefreshActions();
             }
         }
-
+        
         private void RefreshActions()
         {
             this.AvailableActions.Clear();
@@ -63,6 +65,16 @@ namespace Wooster.Classes
                     .Take(this.Config.MaxActionsShown)
                     .ToList()
                     .ForEach(o => this.AvailableActions.Add(o));
+
+                // calculate?..
+                if (this._calculator.LooksLikeMath(this.Query))
+                {
+                    var result = this._calculator.Compute(this.Query);
+                    if (result != null)
+                    {
+                        this.AvailableActions.Insert(0, new WoosterAction(string.Format("Result: {0:F2}", result), null) { Icon = this._calculator.Icon });
+                    }
+                }
 
                 if (this.Config.AutoSelectFirstAvailableAction && this.AvailableActions.Count > 0)
                 {

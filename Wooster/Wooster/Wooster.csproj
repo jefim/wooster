@@ -70,8 +70,11 @@
     <Compile Include="Classes\MainWindowViewModel.cs" />
     <Compile Include="Classes\Theme.cs" />
     <Compile Include="Classes\Actions\WoosterAction.cs" />
+    <Compile Include="Utils\AssemblyHelper.cs" />
+    <Compile Include="Utils\Calculator.cs" />
     <Compile Include="Utils\Hotkey.cs" />
     <Compile Include="Utils\IconExtensions.cs" />
+    <Compile Include="Utils\ImageSourceHelper.cs" />
     <Compile Include="Utils\Keys.cs" />
     <Compile Include="Utils\Observable.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
@@ -138,6 +141,7 @@
     <Content Include="Deps\Microsoft.WindowsAPICodePack.dll" />
     <Content Include="Deps\Microsoft.WindowsAPICodePack.Shell.dll" />
     <Content Include="Deps\Microsoft.WindowsAPICodePack.ShellExtensions.dll" />
+    <EmbeddedResource Include="Graphics\calculate.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

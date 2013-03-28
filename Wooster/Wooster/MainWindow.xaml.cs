@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Wooster.Classes;
 using System.Reflection;
+using Wooster.Utils;
 
 namespace Wooster
 {
@@ -78,26 +79,23 @@ namespace Wooster
 
         private void LoadNotificationIcon()
         {
-            var asm = typeof(MainWindow).Assembly;
-            var resources = asm.GetManifestResourceNames();
-            var icon = resources.FirstOrDefault(o => o.EndsWith("mug.ico"));
-            using (var stream = asm.GetManifestResourceStream(icon))
+            this._notifyIcon = new wf.NotifyIcon();
+            using (var stream = AssemblyHelper.GetEmbeddedResource(typeof(MainWindow).Assembly, "mug.ico"))
             {
-                this._notifyIcon = new wf.NotifyIcon();
                 this._notifyIcon.Icon = new Icon(stream);
-
-                var settingsStripItem = new wf.ToolStripButton("Settings", null, NotifyIcon_ExitMenuItemClick);
-                var exitStripItem = new wf.ToolStripButton("Exit Wooster", null, NotifyIcon_ExitMenuItemClick);
-                var contextMenuStrip = new wf.ContextMenuStrip();
-
-                contextMenuStrip.ShowImageMargin = false;
-                contextMenuStrip.Items.Add(settingsStripItem);
-                contextMenuStrip.Items.Add(exitStripItem);
-                this._notifyIcon.ContextMenuStrip = contextMenuStrip;
-
-                this._notifyIcon.Visible = true;
-                this._notifyIcon.MouseClick += NotifyIcon_MouseClick;
             }
+
+            var settingsStripItem = new wf.ToolStripButton("Settings", null, NotifyIcon_ExitMenuItemClick);
+            var exitStripItem = new wf.ToolStripButton("Exit Wooster", null, NotifyIcon_ExitMenuItemClick);
+            var contextMenuStrip = new wf.ContextMenuStrip();
+
+            contextMenuStrip.ShowImageMargin = false;
+            contextMenuStrip.Items.Add(settingsStripItem);
+            contextMenuStrip.Items.Add(exitStripItem);
+            this._notifyIcon.ContextMenuStrip = contextMenuStrip;
+
+            this._notifyIcon.Visible = true;
+            this._notifyIcon.MouseClick += NotifyIcon_MouseClick;
         }
 
         void NotifyIcon_ExitMenuItemClick(object sender, EventArgs e)
