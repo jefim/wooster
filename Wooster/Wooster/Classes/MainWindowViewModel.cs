@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Wooster.Classes.Actions;
 using Wooster.Utils;
 
@@ -72,7 +67,8 @@ namespace Wooster.Classes
                     var result = this._calculator.Compute(this.Query);
                     if (result != null)
                     {
-                        this.AvailableActions.Insert(0, new WoosterAction(string.Format("Result: {0:F2}", result), null) { Icon = this._calculator.Icon });
+                        this.AvailableActions.Insert(0, new WoosterAction(
+                            string.Format("Result: {0}", result), null) { Icon = this._calculator.Icon });
                     }
                 }
 

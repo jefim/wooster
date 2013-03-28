@@ -162,9 +162,9 @@
                                 </Grid>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="True">
-                                        <Setter TargetName="Image" Property="BitmapEffect">
+                                        <Setter TargetName="Image" Property="Effect">
                                             <Setter.Value>
-                                                <DropShadowBitmapEffect Color="White" ShadowDepth="0" />
+                                                <DropShadowEffect Color="White" BlurRadius="10" ShadowDepth="0" />
                                             </Setter.Value>
                                         </Setter>
                                     </DataTrigger>
