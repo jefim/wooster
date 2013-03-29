@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Wooster.Classes.Actions;
 using Wooster.Utils;
 
@@ -48,18 +49,30 @@ namespace Wooster.Classes
                 this.RefreshActions();
             }
         }
-        
+
         private void RefreshActions()
         {
             this.AvailableActions.Clear();
 
             if (!string.IsNullOrWhiteSpace(this.Query))
             {
+                // search by first letters
+                // @"\b{CHUNK1}.*\b"
+                // @"\b{CHUNK1}.*?\b{CHUNK2}.*\b"
+                var chunks = this.Query.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                Regex regex = new Regex(string.Format(@"\b{0}.*\b", string.Join(@".*?\b", chunks)), RegexOptions.IgnoreCase);
                 this._cache.AllActions
-                    .Where(o => o.Name.ToLower().Contains(this.Query.ToLower()))
+                    .Where(o =>
+                    {
+                        // search by contains
+                        if (o.Name.ToLower().Contains(this.Query.ToLower())) return true;
+
+                        // search by first letters
+                        return regex.IsMatch(o.Name);
+                    })
                     .Take(this.Config.MaxActionsShown)
                     .ToList()
-                    .ForEach(o => this.AvailableActions.Add(o));
+                    .ForEach(o => this.AvailableActions.Add(o));                
 
                 // calculate?..
                 if (this._calculator.LooksLikeMath(this.Query))

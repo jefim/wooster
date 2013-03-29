@@ -17,6 +17,7 @@ namespace Wooster.Classes
 
         public string SelectedActionBackgroundColor { get; set; }
         public string SelectedActionForegroundColor { get; set; }
+        public string SelectedActionIconShadowColor { get; set; }
 
         /// <summary>
         /// Gets or sets the color of alternating elements' background in the action list.
@@ -37,6 +38,7 @@ namespace Wooster.Classes
 
             this.SelectedActionBackgroundColor = "#66BFFF";
             this.SelectedActionForegroundColor = "#FFFFFF";
+            this.SelectedActionIconShadowColor = "#FFFFFF";
         }
     }
 }

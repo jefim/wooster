@@ -144,6 +144,7 @@ namespace Wooster
             if (this.IsVisible)
             {
                 var act = this.Activate();
+                this.UpdatePositionOnScreen();
                 this.Topmost = true;  // important
                 this.Topmost = false; // important
                 this.Focus();         // important

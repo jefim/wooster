@@ -57,6 +57,7 @@ namespace Wooster.Classes.Actions
             var shellFile = ShellFile.FromFilePath(this.ShortcutPath);
             this.RealPath = shellFile.Properties.System.Link.TargetParsingPath.Value;
             var icon = WindowsShortcut.GetIconForFile(this.RealPath, ShellIconSize.LargeIcon);
+            if (icon == null) icon = WindowsShortcut.GetIconForFile(this.ShortcutPath, ShellIconSize.LargeIcon); // try getting the icon from shortcut if failed getting from target
             if (icon != null) this.Icon = icon.ToImageSource();
             this.Name = Path.GetFileNameWithoutExtension(this.ShortcutPath);
             this.Action = () => Process.Start(this.ShortcutPath);

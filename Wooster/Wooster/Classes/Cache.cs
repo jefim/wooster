@@ -90,14 +90,13 @@ namespace Wooster.Classes
         /// <returns></returns>
         private static IEnumerable<ProgramShortcutAction> ScanDirectoryForShortcuts(string directoryPath)
         {
+            List<string> extensionsToParse = new List<string> { ".lnk", ".url" };
             if (Directory.Exists(directoryPath))
             {
-                foreach (var file in Directory.EnumerateFiles(directoryPath, "*.lnk", SearchOption.AllDirectories))
+                foreach (var file in Directory.EnumerateFiles(directoryPath, "*.*", SearchOption.AllDirectories))
                 {
-                    if (file.EndsWith(".lnk", StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        yield return new ProgramShortcutAction(file);
-                    }
+                    if (!extensionsToParse.Contains(Path.GetExtension(file).ToLower())) continue;
+                    yield return new ProgramShortcutAction(file);
                 }
             }
         }
