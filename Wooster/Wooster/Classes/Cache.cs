@@ -43,6 +43,8 @@ namespace Wooster.Classes
             var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var appFolder = "Wooster";
             var configFileName = "Wooster.cache.xml";
+            var fullAppFolder = Path.Combine(appDataPath, appFolder);
+            if (!Directory.Exists(fullAppFolder)) Directory.CreateDirectory(fullAppFolder);
             return Path.Combine(appDataPath, appFolder, configFileName);
         }
 
