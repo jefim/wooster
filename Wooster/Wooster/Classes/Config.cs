@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
+using Wooster.Utils;
 
 namespace Wooster.Classes
 {
@@ -16,11 +17,17 @@ namespace Wooster.Classes
             this.Theme = new Theme();
             this.AutoSelectFirstAvailableAction = true;
             this.MaxActionsShown = 10;
+            this.HotkeyConfig = new HotkeyConfig();
+            this.SearchByFirstLettersEnabled = true;
         }
 
         public bool AutoSelectFirstAvailableAction { get; set; }
 
+        public bool SearchByFirstLettersEnabled { get; set; }
+
         public int MaxActionsShown { get; set; }
+
+        public HotkeyConfig HotkeyConfig { get; set; }
 
         public Theme Theme { get; set; }
 
@@ -100,5 +107,27 @@ namespace Wooster.Classes
             }
             return config;
         }
+    }
+
+    public class HotkeyConfig
+    {
+        public HotkeyConfig()
+        {
+            this.Alt = false;
+            this.Control = false;
+            this.Shift = true;
+            this.Win = false;
+            this.Key = Keys.Space;
+        }
+
+        public bool Alt { get; set; }
+
+        public bool Control { get; set; }
+
+        public bool Shift { get; set; }
+
+        public bool Win { get; set; }
+
+        public Keys Key { get; set; }
     }
 }

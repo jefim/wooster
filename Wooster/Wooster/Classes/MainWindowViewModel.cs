@@ -46,6 +46,7 @@ namespace Wooster.Classes
                 if (this._query == value) return;
                 this._query = value;
                 OnPropertyChanged("Query");
+
                 this.RefreshActions();
             }
         }
@@ -67,8 +68,12 @@ namespace Wooster.Classes
                         // search by contains
                         if (o.Name.ToLower().Contains(this.Query.ToLower())) return true;
 
-                        // search by first letters
-                        return regex.IsMatch(o.Name);
+                        if (this.Config.SearchByFirstLettersEnabled)
+                        {
+                            // search by first letters
+                            return regex.IsMatch(o.Name);
+                        }
+                        else return false;
                     })
                     .Take(this.Config.MaxActionsShown)
                     .ToList()

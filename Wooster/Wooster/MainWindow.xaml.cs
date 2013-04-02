@@ -19,6 +19,7 @@ using System.Windows.Threading;
 using Wooster.Classes;
 using System.Reflection;
 using Wooster.Utils;
+using MovablePython;
 
 namespace Wooster
 {
@@ -29,6 +30,8 @@ namespace Wooster
     {
         private MainWindowViewModel _mainWindowViewModel;
         private wf.NotifyIcon _notifyIcon;
+        private Hotkey _hotkey;
+        private System.Windows.Interop.WindowInteropHelper _windowInteropHelper;
 
         public MainWindow()
         {
@@ -45,6 +48,37 @@ namespace Wooster
             TextBox.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(this.MainWindow_KeyDown), true);
 
             this.UpdatePositionOnScreen();
+            this.Loaded += (s,e) => this.SetupHotkey();
+        }
+
+        private void SetupHotkey()
+        {
+            if (this._hotkey != null) return;
+
+            this._hotkey = new Hotkey();
+            this._hotkey.Alt = this._mainWindowViewModel.Config.HotkeyConfig.Alt;
+            this._hotkey.Control = this._mainWindowViewModel.Config.HotkeyConfig.Control;
+            this._hotkey.Windows = this._mainWindowViewModel.Config.HotkeyConfig.Win;
+            this._hotkey.Shift = this._mainWindowViewModel.Config.HotkeyConfig.Shift;
+            this._hotkey.KeyCode = this._mainWindowViewModel.Config.HotkeyConfig.Key;
+            this._hotkey.Pressed += Hotkey_Pressed;
+            this._windowInteropHelper = new System.Windows.Interop.WindowInteropHelper(this);
+            if (!this._hotkey.GetCanRegister(this._windowInteropHelper.Handle))
+            {
+                Console.WriteLine("Whoops, looks like attempts to register will fail or throw an exception, show an error/visual user feedback");
+            }
+            else
+            {
+                this._hotkey.Register(this._windowInteropHelper.Handle);
+            }
+
+            this.Hide();
+        }
+
+        void Hotkey_Pressed(object sender, System.ComponentModel.HandledEventArgs e)
+        {
+            if (this.IsVisible) { this.Hide(); }
+            else { this.Show(); }
         }
 
         void MainWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -155,6 +189,11 @@ namespace Wooster
                     Keyboard.Focus(this.TextBox);
                 }, DispatcherPriority.Normal);
             }
+        }
+
+        internal void Exit()
+        {
+            if (this._hotkey.Registered) { this._hotkey.Unregister(); }
         }
     }
 }
