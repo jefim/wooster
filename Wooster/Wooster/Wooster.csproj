@@ -64,6 +64,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\Actions\PredefinedActions.cs" />
     <Compile Include="Classes\Actions\ProgramShortcutAction.cs" />
     <Compile Include="Classes\Cache.cs" />
     <Compile Include="Classes\Config.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Classes\Actions\WoosterAction.cs" />
     <Compile Include="Utils\AssemblyHelper.cs" />
     <Compile Include="Utils\Calculator.cs" />
+    <Compile Include="Utils\GetDisplayNameConverter.cs" />
     <Compile Include="Utils\Hotkey.cs" />
     <Compile Include="Utils\IconExtensions.cs" />
     <Compile Include="Utils\ImageSourceHelper.cs" />

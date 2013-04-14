@@ -50,7 +50,7 @@ namespace Wooster.Classes.Actions
             {
                 this.Icon = null;
                 this.Action = null;
-                this.Name = string.Empty;
+                this.SearchableName = string.Empty;
                 return;
             }
 
@@ -59,8 +59,8 @@ namespace Wooster.Classes.Actions
             var icon = WindowsShortcut.GetIconForFile(this.RealPath, ShellIconSize.LargeIcon);
             if (icon == null) icon = WindowsShortcut.GetIconForFile(this.ShortcutPath, ShellIconSize.LargeIcon); // try getting the icon from shortcut if failed getting from target
             if (icon != null) this.Icon = icon.ToImageSource();
-            this.Name = Path.GetFileNameWithoutExtension(this.ShortcutPath);
-            this.Action = () => Process.Start(this.ShortcutPath);
+            this.SearchableName = Path.GetFileNameWithoutExtension(this.ShortcutPath);
+            this.Action = s => Process.Start(this.ShortcutPath);
         }
     }
 }

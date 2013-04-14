@@ -18,6 +18,8 @@ namespace Wooster.Classes
         private Cache _cache;
         private Calculator _calculator = new Calculator();
 
+        public static string CurrentQuery { get; private set; }
+
         public MainWindowViewModel()
         {
             this.Config = Config.Load();
@@ -45,8 +47,8 @@ namespace Wooster.Classes
             {
                 if (this._query == value) return;
                 this._query = value;
+                CurrentQuery = value;
                 OnPropertyChanged("Query");
-
                 this.RefreshActions();
             }
         }
@@ -66,12 +68,12 @@ namespace Wooster.Classes
                     .Where(o =>
                     {
                         // search by contains
-                        if (o.Name.ToLower().Contains(this.Query.ToLower())) return true;
+                        if (o.SearchableName.ToLower().Contains(this.Query.ToLower())) return true;
 
                         if (this.Config.SearchByFirstLettersEnabled)
                         {
                             // search by first letters
-                            return regex.IsMatch(o.Name);
+                            return regex.IsMatch(o.SearchableName);
                         }
                         else return false;
                     })
@@ -165,7 +167,7 @@ namespace Wooster.Classes
 
         private void ExecuteActionCommand_Executed(object obj)
         {
-            this.SelectedAction.Execute();
+            this.SelectedAction.Execute(this.Query);
             this.DeactivateCommand.Execute(null);
         }
 

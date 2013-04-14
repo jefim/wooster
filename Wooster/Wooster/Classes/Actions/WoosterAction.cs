@@ -10,38 +10,52 @@ namespace Wooster.Classes.Actions
 {
     public class WoosterAction : Observable
     {
-        private string _name;
+        private string _searchableName;
         private ImageSource _icon;
+        private bool _includeQueryInDisplayName;
 
         public WoosterAction()
         {
-            this.Name = string.Empty;
+            this.SearchableName = string.Empty;
         }
 
-        public WoosterAction(string name, Action action)
+        public WoosterAction(string name, Action<string> action, bool includeQueryInDisplayName = false)
         {
-            this.Name = name;
+            this.SearchableName = name;
             this.Action = action;
+            this._includeQueryInDisplayName = includeQueryInDisplayName;
         }
 
         [XmlIgnore]
-        public Action Action { get; set; }
+        public Action<string> Action { get; set; }
 
         [XmlAttribute]
-        public string Name
+        public string SearchableName
         {
-            get { return this._name; }
+            get { return this._searchableName; }
             set
             {
-                this._name = value;
-                OnPropertyChanged("Name");
+                this._searchableName = value;
+                OnPropertyChanged("SearchableName");
             }
         }
 
-        public void Execute()
+        /// <summary>
+        /// The name that is displayed in Wooster (and SearchableName is the one that Wooster uses to search actions).
+        /// </summary>
+        public virtual string GetDisplayName(string query)
+        {
+            if (this._includeQueryInDisplayName)
+            {
+                return string.Format("{0} '{1}'", this.SearchableName, query);
+            }
+            else { return this.SearchableName; }
+        }
+
+        public void Execute(string query)
         {
             if (this.Action == null) return;
-            this.Action();
+            this.Action(query);
         }
 
         [XmlIgnore]

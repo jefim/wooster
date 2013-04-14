@@ -15,7 +15,8 @@ namespace Wooster.Classes
 
         public Cache()
         {
-            this._defaultActions = new List<WoosterAction> { new WoosterAction("Recache Wooster data", () => this.RecacheData()) };
+            this._defaultActions = new List<WoosterAction>(PredefinedActions.GetPredefinedActions());
+            this._defaultActions.Add(new WoosterAction("Recache Wooster data", s => this.RecacheData()));
             this.ProgramShortcutActions = new List<ProgramShortcutAction>();
         }
 
@@ -34,7 +35,7 @@ namespace Wooster.Classes
         {
             get
             {
-                return this._defaultActions.Union(this.ProgramShortcutActions).OrderBy(o => o.Name);
+                return this._defaultActions.Union(this.ProgramShortcutActions).OrderBy(o => o.SearchableName);
             }
         }
 

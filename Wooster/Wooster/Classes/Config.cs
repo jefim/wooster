@@ -67,6 +67,9 @@ namespace Wooster.Classes
         /// <returns></returns>
         public static Config Load()
         {
+#if DEBUG
+            return new Config();
+#endif
             Config config = null;
             var defaultConfigPath = GetDefaultConfigPath();
 
