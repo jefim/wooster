@@ -19,11 +19,12 @@ namespace Wooster.Classes.Actions
             this.SearchableName = string.Empty;
         }
 
-        public WoosterAction(string name, Action<string> action, bool includeQueryInDisplayName = false)
+        public WoosterAction(string name, Action<string> action, bool includeQueryInDisplayName = false, bool alwaysVisible = false)
         {
             this.SearchableName = name;
             this.Action = action;
             this._includeQueryInDisplayName = includeQueryInDisplayName;
+            this.AlwaysVisible = alwaysVisible;
         }
 
         [XmlIgnore]
@@ -38,6 +39,13 @@ namespace Wooster.Classes.Actions
                 this._searchableName = value;
                 OnPropertyChanged("SearchableName");
             }
+        }
+
+        [XmlAttribute]
+        public bool AlwaysVisible
+        {
+            get;
+            set;
         }
 
         /// <summary>

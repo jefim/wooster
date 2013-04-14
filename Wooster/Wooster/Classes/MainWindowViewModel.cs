@@ -68,7 +68,7 @@ namespace Wooster.Classes
                     .Where(o =>
                     {
                         // search by contains
-                        if (o.SearchableName.ToLower().Contains(this.Query.ToLower())) return true;
+                        if (o.AlwaysVisible || o.SearchableName.ToLower().Contains(this.Query.ToLower())) return true;
 
                         if (this.Config.SearchByFirstLettersEnabled)
                         {
