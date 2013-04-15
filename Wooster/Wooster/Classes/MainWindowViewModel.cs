@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 using Wooster.Classes.Actions;
 using Wooster.Utils;
 
@@ -49,13 +53,24 @@ namespace Wooster.Classes
                 this._query = value;
                 CurrentQuery = value;
                 OnPropertyChanged("Query");
-                this.RefreshActions();
+
+                this._lastQueryStringChange = DateTime.Now;
+                Task.Factory.StartNew(() =>
+                {
+                    Thread.Sleep(200);
+                    if ((DateTime.Now - this._lastQueryStringChange).TotalMilliseconds >= 200) this.RefreshActions();
+                });
+                //this.RefreshActions();
             }
         }
 
+        private DateTime _lastQueryStringChange = DateTime.MinValue;
+        private Task _refreshActionsTask = null;
+
         private void RefreshActions()
         {
-            this.AvailableActions.Clear();
+            var outputActions = new List<WoosterAction>();
+            //this.AvailableActions.Clear();
 
             if (!string.IsNullOrWhiteSpace(this.Query))
             {
@@ -79,7 +94,7 @@ namespace Wooster.Classes
                     })
                     .Take(this.Config.MaxActionsShown)
                     .ToList()
-                    .ForEach(o => this.AvailableActions.Add(o));                
+                    .ForEach(o => outputActions.Add(o));                
 
                 // calculate?..
                 if (this._calculator.LooksLikeMath(this.Query))
@@ -87,18 +102,25 @@ namespace Wooster.Classes
                     var result = this._calculator.Compute(this.Query);
                     if (result != null)
                     {
-                        this.AvailableActions.Insert(0, new WoosterAction(
+                        outputActions.Insert(0, new WoosterAction(
                             string.Format("Result: {0}", result), null) { Icon = this._calculator.Icon });
                     }
                 }
+            }
+
+            // Update UI
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                this.AvailableActions.Clear();
+                foreach (var action in outputActions) this.AvailableActions.Add(action);
 
                 if (this.Config.AutoSelectFirstAvailableAction && this.AvailableActions.Count > 0)
                 {
                     this.SelectedAction = this.AvailableActions.First();
                 }
-            }
 
-            this.IsPopupOpen = this.AvailableActions.Count > 0;
+                this.IsPopupOpen = this.AvailableActions.Count > 0;
+            }));
         }
         
         private void RecacheData()
