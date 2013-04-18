@@ -16,7 +16,6 @@ namespace Wooster
     public partial class App : Application
     {
         MainWindow _window = new MainWindow();
-        private System.Windows.Interop.WindowInteropHelper _windowInteropHelper;
 
         protected override void OnStartup(StartupEventArgs e)
         {

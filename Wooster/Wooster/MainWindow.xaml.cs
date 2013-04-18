@@ -28,6 +28,7 @@ namespace Wooster
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static MainWindow s_mainWindow;
         private MainWindowViewModel _mainWindowViewModel;
         private wf.NotifyIcon _notifyIcon;
         private Hotkey _hotkey;
@@ -39,6 +40,8 @@ namespace Wooster
             this._mainWindowViewModel = new MainWindowViewModel();
             this._mainWindowViewModel.HideRequest += MainWindowViewModel_HideRequest;
             this.DataContext = this._mainWindowViewModel;
+            if (s_mainWindow != null) throw new InvalidOperationException("There can be only one main window!");
+            s_mainWindow = this;
 
             this.IsVisibleChanged += MainWindow_IsVisibleChanged;
             this.Deactivated += MainWindow_Deactivated;
@@ -49,6 +52,11 @@ namespace Wooster
 
             this.UpdatePositionOnScreen();
             this.Loaded += (s,e) => this.SetupHotkey();
+        }
+
+        public static IntPtr GetMainWindowHandle()
+        {
+            return (IntPtr)s_mainWindow.Dispatcher.Invoke(new Func<IntPtr>(() => s_mainWindow._windowInteropHelper.Handle));
         }
 
         private void SetupHotkey()

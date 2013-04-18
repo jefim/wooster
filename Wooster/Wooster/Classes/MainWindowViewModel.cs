@@ -21,6 +21,7 @@ namespace Wooster.Classes
         private WoosterAction _selectedAction;
         private Cache _cache;
         private Calculator _calculator = new Calculator();
+        private WindowsExplorerHelper _windowsExplorerHelper = new WindowsExplorerHelper();
 
         public static string CurrentQuery { get; private set; }
 
@@ -108,6 +109,11 @@ namespace Wooster.Classes
                             string.Format("Copy result to clipboard: {0}", result), s => Clipboard.SetText(result)) { Icon = this._calculator.Icon });
                     }
                 }
+
+                outputActions.Insert(0, new WoosterAction("EXPLORER", s =>
+                {
+                    this._windowsExplorerHelper.GetExplorerSelectedFiles11();
+                }));
             }
 
             // Update UI
@@ -129,7 +135,7 @@ namespace Wooster.Classes
         {
             this._cache.RecacheData();
         }
-
+        
         internal void OnActivated()
         {
         }
