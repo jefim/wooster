@@ -105,7 +105,7 @@ namespace Wooster.Classes
                     if (result != null)
                     {
                         outputActions.Insert(0, new WoosterAction(
-                            string.Format("Result: {0}", result), null) { Icon = this._calculator.Icon });
+                            string.Format("Copy result to clipboard: {0}", result), s => Clipboard.SetText(result)) { Icon = this._calculator.Icon });
                     }
                 }
             }

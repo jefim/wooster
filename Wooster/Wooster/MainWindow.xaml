@@ -8,6 +8,7 @@
         AllowsTransparency="True"
         WindowStartupLocation="Manual"
         Background="Transparent"
+        UseLayoutRounding="True"
         Topmost="True">
     <Window.InputBindings>
         <KeyBinding Key="Escape" Command="{Binding DeactivateCommand}" />
