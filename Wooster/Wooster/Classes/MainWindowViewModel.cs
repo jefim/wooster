@@ -93,6 +93,8 @@ namespace Wooster.Classes
                         else return false;
                     })
                     .Take(this.Config.MaxActionsShown)
+                    .OrderBy(o => o.OrderHint)
+                    .ThenBy(o => o.SearchableName)
                     .ToList()
                     .ForEach(o => outputActions.Add(o));                
 

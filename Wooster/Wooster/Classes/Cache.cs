@@ -29,7 +29,8 @@ namespace Wooster.Classes
             }
         }
 
-        public List<ProgramShortcutAction> ProgramShortcutActions { get; private set; }
+        // DO NOT CHANGE BACK TO "private set;" - this makes it crash in .NET 4.0!
+        public List<ProgramShortcutAction> ProgramShortcutActions { get; set; }
 
         public IEnumerable<WoosterAction> AllActions
         {

@@ -17,6 +17,7 @@ namespace Wooster.Classes.Actions
         public WoosterAction()
         {
             this.SearchableName = string.Empty;
+            this.OrderHint = 0;
         }
 
         public WoosterAction(string name, Action<string> action, bool includeQueryInDisplayName = false, bool alwaysVisible = false)
@@ -29,6 +30,9 @@ namespace Wooster.Classes.Actions
 
         [XmlIgnore]
         public Action<string> Action { get; set; }
+
+        [XmlAttribute]
+        public int OrderHint { get; set; }
 
         [XmlAttribute]
         public string SearchableName
