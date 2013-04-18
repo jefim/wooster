@@ -21,7 +21,6 @@ namespace Wooster.Classes
         private WoosterAction _selectedAction;
         private Cache _cache;
         private Calculator _calculator = new Calculator();
-        private WindowsExplorerHelper _windowsExplorerHelper = new WindowsExplorerHelper();
 
         public static string CurrentQuery { get; private set; }
 
@@ -61,7 +60,6 @@ namespace Wooster.Classes
                     Thread.Sleep(200);
                     if ((DateTime.Now - this._lastQueryStringChange).TotalMilliseconds >= 200) this.RefreshActions();
                 });
-                //this.RefreshActions();
             }
         }
 
@@ -71,7 +69,6 @@ namespace Wooster.Classes
         private void RefreshActions()
         {
             var outputActions = new List<WoosterAction>();
-            //this.AvailableActions.Clear();
 
             if (!string.IsNullOrWhiteSpace(this.Query))
             {
@@ -109,11 +106,6 @@ namespace Wooster.Classes
                             string.Format("Copy result to clipboard: {0}", result), s => Clipboard.SetText(result)) { Icon = this._calculator.Icon });
                     }
                 }
-
-                outputActions.Insert(0, new WoosterAction("EXPLORER", s =>
-                {
-                    this._windowsExplorerHelper.GetExplorerSelectedFiles11();
-                }));
             }
 
             // Update UI
