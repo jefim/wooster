@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using Wooster.ActionProviders;
 using Wooster.Classes.Actions;
 using Wooster.Utils;
 
@@ -18,20 +19,24 @@ namespace Wooster.Classes
         private RelayCommand _deactivateCommand;
         private RelayCommand _executeActionCommand;
         internal event EventHandler HideRequest;
-        private WoosterAction _selectedAction;
-        private Cache _cache;
-        private Calculator _calculator = new Calculator();
+        private IAction _selectedAction;
         private DateTime _lastQueryStringChange = DateTime.MinValue;
-        private Task _refreshActionsTask = null;
+        private List<IActionProvider> _providers;
 
         public static string CurrentQuery { get; private set; }
 
         public MainWindowViewModel()
         {
             this.Config = Config.Load();
-            this._cache = Cache.Load();
             this.IsPopupOpen = false;
-            this.AvailableActions = new ObservableCollection<WoosterAction>();
+            this.AvailableActions = new ObservableCollection<IAction>();
+            this._providers = new List<IActionProvider>();
+            this._providers.Add(new LocalProgramsActionProvider());
+            this._providers.Add(new CalculatorActionProvider());
+            foreach (var provider in this._providers)
+            {
+                provider.Initialize(this.Config);
+            }
         }
 
         public Config Config { get; private set; }
@@ -67,44 +72,14 @@ namespace Wooster.Classes
 
         private void RefreshActions()
         {
-            var outputActions = new List<WoosterAction>();
-
+            List<IAction> outputActions = new List<IAction>();
             if (!string.IsNullOrWhiteSpace(this.Query))
-            {
-                // search by first letters
-                // @"\b{CHUNK1}.*\b"
-                // @"\b{CHUNK1}.*?\b{CHUNK2}.*\b"
-                var chunks = this.Query.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                Regex regex = new Regex(string.Format(@"\b{0}.*\b", string.Join(@".*?\b", chunks)), RegexOptions.IgnoreCase);
-                this._cache.AllActions
-                    .Where(o =>
-                    {
-                        // search by contains
-                        if (o.AlwaysVisible || o.SearchableName.ToLower().Contains(this.Query.ToLower())) return true;
-
-                        if (this.Config.SearchByFirstLettersEnabled)
-                        {
-                            // search by first letters
-                            return regex.IsMatch(o.SearchableName);
-                        }
-                        else return false;
-                    })
+            {                
+                outputActions = this._providers
+                    .SelectMany(o => o.GetActions(this.Query))
                     .Take(this.Config.MaxActionsShown)
                     .OrderBy(o => o.OrderHint)
-                    .ThenBy(o => o.SearchableName)
-                    .ToList()
-                    .ForEach(o => outputActions.Add(o));                
-
-                // calculate?..
-                if (this._calculator.LooksLikeMath(this.Query))
-                {
-                    var result = this._calculator.Compute(this.Query);
-                    if (result != null)
-                    {
-                        outputActions.Insert(0, new WoosterAction(
-                            string.Format("Copy result to clipboard: {0}", result), s => Clipboard.SetText(result)) { Icon = this._calculator.Icon });
-                    }
-                }
+                    .ToList();
             }
 
             // Update UI
@@ -124,7 +99,10 @@ namespace Wooster.Classes
         
         private void RecacheData()
         {
-            this._cache.RecacheData();
+            foreach (var provider in this._providers)
+            {
+                provider.RecacheData();
+            }
         }
         
         internal void OnActivated()
@@ -143,13 +121,13 @@ namespace Wooster.Classes
             if (evt != null) { evt(this, EventArgs.Empty); }
         }
 
-        public ObservableCollection<WoosterAction> AvailableActions
+        public ObservableCollection<IAction> AvailableActions
         {
             get;
             private set;
         }
 
-        public WoosterAction SelectedAction
+        public IAction SelectedAction
         {
             get { return this._selectedAction; }
             set

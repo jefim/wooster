@@ -8,7 +8,7 @@ using Wooster.Utils;
 
 namespace Wooster.Classes.Actions
 {
-    public class WoosterAction : Observable
+    public class WoosterAction : Observable, IAction
     {
         private string _searchableName;
         private ImageSource _icon;
