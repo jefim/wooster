@@ -64,13 +64,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\Actions\ExecuteCommandAction.cs" />
     <Compile Include="Classes\Actions\PredefinedActions.cs" />
     <Compile Include="Classes\Actions\ProgramShortcutAction.cs" />
     <Compile Include="Classes\Cache.cs" />
     <Compile Include="Classes\Config.cs" />
+    <Compile Include="Utils\DialogService.cs" />
     <Compile Include="Classes\MainWindowViewModel.cs" />
     <Compile Include="Classes\Theme.cs" />
     <Compile Include="Classes\Actions\WoosterAction.cs" />
+    <Compile Include="Utils\ViewModelBase.cs" />
     <Compile Include="Utils\AssemblyHelper.cs" />
     <Compile Include="Utils\Calculator.cs" />
     <Compile Include="Utils\GetDisplayNameConverter.cs" />
@@ -82,6 +85,10 @@
     <Compile Include="Utils\RelayCommand.cs" />
     <Compile Include="Utils\WindowsExplorerHelper.cs" />
     <Compile Include="Utils\WindowsShortcut.cs" />
+    <Compile Include="ViewModels\PreferencesViewModel.cs" />
+    <Compile Include="Views\PreferencesView.xaml.cs">
+      <DependentUpon>PreferencesView.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -94,6 +101,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PreferencesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

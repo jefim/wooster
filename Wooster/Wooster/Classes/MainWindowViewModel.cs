@@ -21,6 +21,8 @@ namespace Wooster.Classes
         private WoosterAction _selectedAction;
         private Cache _cache;
         private Calculator _calculator = new Calculator();
+        private DateTime _lastQueryStringChange = DateTime.MinValue;
+        private Task _refreshActionsTask = null;
 
         public static string CurrentQuery { get; private set; }
 
@@ -62,9 +64,6 @@ namespace Wooster.Classes
                 });
             }
         }
-
-        private DateTime _lastQueryStringChange = DateTime.MinValue;
-        private Task _refreshActionsTask = null;
 
         private void RefreshActions()
         {

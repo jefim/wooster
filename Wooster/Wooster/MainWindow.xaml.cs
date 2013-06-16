@@ -56,6 +56,7 @@ namespace Wooster
 
         public static IntPtr GetMainWindowHandle()
         {
+            if (s_mainWindow == null) return IntPtr.Zero;
             return (IntPtr)s_mainWindow.Dispatcher.Invoke(new Func<IntPtr>(() => s_mainWindow._windowInteropHelper.Handle));
         }
 

@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Wooster.Classes.Actions;
 using Wooster.Utils;
+using Wooster.ViewModels;
 
 namespace Wooster.Classes
 {
@@ -20,6 +21,7 @@ namespace Wooster.Classes
             this._defaultActions = new List<WoosterAction>(PredefinedActions.GetPredefinedActions());
             this._defaultActions.Add(new WoosterAction("Recache Wooster data", s => this.RecacheData()));
             this._defaultActions.Add(new WoosterAction("Test Windows Explorer", s => this._windowsExplorerHelper.GetExplorerSelectedFiles()));
+            this._defaultActions.Add(new WoosterAction("Open Wooster preferences", s=> DialogService.ShowDialog(new PreferencesViewModel(), 700, 600)));
 
             this.ProgramShortcutActions = new List<ProgramShortcutAction>();
         }

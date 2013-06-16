@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,6 +22,7 @@ namespace Wooster
         {
             base.OnStartup(e);
             // yay!
+            var sw = Stopwatch.StartNew();
             this.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
             this._window.Show();
         }
