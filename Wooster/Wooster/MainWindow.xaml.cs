@@ -48,7 +48,7 @@ namespace Wooster
             this.MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
 
             this.LoadNotificationIcon();
-            TextBox.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(this.MainWindow_KeyDown), true);
+            this.TextBox.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(this.MainWindow_KeyDown), true);
 
             this.UpdatePositionOnScreen();
             this.Loaded += (s,e) => this.SetupHotkey();
@@ -103,6 +103,7 @@ namespace Wooster
 
         void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.IsRepeat) return;
             if (e.Key == Key.Down)
             {
                 var newIdx = this.ListBoxActions.SelectedIndex + 1;
@@ -203,6 +204,11 @@ namespace Wooster
         internal void Exit()
         {
             if (this._hotkey.Registered) { this._hotkey.Unregister(); }
+        }
+
+        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }

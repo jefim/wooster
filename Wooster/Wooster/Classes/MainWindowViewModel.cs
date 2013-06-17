@@ -33,6 +33,7 @@ namespace Wooster.Classes
             this._providers = new List<IActionProvider>();
             this._providers.Add(new LocalProgramsActionProvider());
             this._providers.Add(new CalculatorActionProvider());
+            this._providers.Add(new CurrencyConverterActionProvider());
             foreach (var provider in this._providers)
             {
                 provider.Initialize(this.Config);
