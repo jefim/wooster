@@ -33,7 +33,7 @@ namespace Wooster.Classes
 
         private static string GetDefaultConfigPath()
         {
-            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var appFolder = "Wooster";
             var configFileName = "Wooster.config.xml";
             return Path.Combine(appDataPath, appFolder, configFileName);
@@ -42,13 +42,17 @@ namespace Wooster.Classes
         public void Save()
         {
             var serializer = new XmlSerializer(typeof(Config));
-            using (var writer = XmlTextWriter.Create(GetRealConfigPath(), new XmlWriterSettings { Indent = true }))
+            var realConfigPath = GetRealConfigPath();
+
+            var dir = Path.GetDirectoryName(realConfigPath);
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            using (var writer = XmlTextWriter.Create(realConfigPath, new XmlWriterSettings { Indent = true }))
             {
                 serializer.Serialize(writer, this);
             }
         }
 
-        private static string GetRealConfigPath()
+        internal static string GetRealConfigPath()
         {
             var userConfigPath = Properties.Settings.Default.ConfigFilePath;
             if (string.IsNullOrWhiteSpace(userConfigPath))
@@ -71,25 +75,40 @@ namespace Wooster.Classes
             return new Config();
 #endif
             Config config = null;
-            var defaultConfigPath = GetDefaultConfigPath();
-
-            // Try loading user config path
-            if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.ConfigFilePath))
+            var configPath = GetRealConfigPath();
+            try
             {
-                var userConfigPath = Properties.Settings.Default.ConfigFilePath;
-                try
-                {
-                    config = LoadConfig(userConfigPath);
-                }
-                catch (Exception ex)
-                {
-                    // Failed - show user a message.
-                    MessageBox.Show(string.Format("Failed to load config from path '{0}'; will use default configuration.\r\n\r\nError message: \r\n{1}", userConfigPath, ex.Message));
-                }
+                config = LoadConfig(configPath);
+            }
+            catch (Exception ex)
+            {
+                // Failed - show user a message.
+                MessageBox.Show(string.Format("Failed to load config from path '{0}'; will use default configuration.\r\n\r\nError message: \r\n{1}", configPath, ex.Message));
             }
 
+            //var defaultConfigPath = GetDefaultConfigPath();
+
+            //// Try loading user config path
+            //if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.ConfigFilePath))
+            //{
+            //    var userConfigPath = Properties.Settings.Default.ConfigFilePath;
+            //    try
+            //    {
+            //        config = LoadConfig(userConfigPath);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        // Failed - show user a message.
+            //        MessageBox.Show(string.Format("Failed to load config from path '{0}'; will use default configuration.\r\n\r\nError message: \r\n{1}", userConfigPath, ex.Message));
+            //    }
+            //}
+
             // If still no config - use the default config
-            if(config == null) config = new Config();
+            if (config == null)
+            {
+                config = new Config();
+                config.Save();
+            }
 
             return config;
         }

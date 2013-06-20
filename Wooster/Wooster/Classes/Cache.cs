@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,8 @@ namespace Wooster.Classes
             this._defaultActions = new List<WoosterAction>(PredefinedActions.GetPredefinedActions());
             this._defaultActions.Add(new WoosterAction("Recache Wooster data", s => this.RecacheData()));
             this._defaultActions.Add(new WoosterAction("Test Windows Explorer", s => this._windowsExplorerHelper.GetExplorerSelectedFiles()));
-            this._defaultActions.Add(new WoosterAction("Open Wooster preferences", s=> DialogService.ShowDialog(new PreferencesViewModel(), 700, 600)));
+            //this._defaultActions.Add(new WoosterAction("Open Wooster preferences", s=> DialogService.ShowDialog(new PreferencesViewModel(), 700, 600)));
+            this._defaultActions.Add(new WoosterAction("Open Wooster config folder", s => Process.Start(Path.GetDirectoryName(Config.GetRealConfigPath()))));
 
             this.ProgramShortcutActions = new List<ProgramShortcutAction>();
         }
