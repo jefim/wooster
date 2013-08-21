@@ -1,23 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using wf = System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using Wooster.Classes;
-using System.Reflection;
 using Wooster.Utils;
 using MovablePython;
 
@@ -28,8 +17,8 @@ namespace Wooster
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static MainWindow s_mainWindow;
-        private MainWindowViewModel _mainWindowViewModel;
+        private static MainWindow _sMainWindow;
+        private readonly MainWindowViewModel _mainWindowViewModel;
         private wf.NotifyIcon _notifyIcon;
         private Hotkey _hotkey;
         private System.Windows.Interop.WindowInteropHelper _windowInteropHelper;
@@ -40,15 +29,15 @@ namespace Wooster
             this._mainWindowViewModel = new MainWindowViewModel();
             this._mainWindowViewModel.HideRequest += MainWindowViewModel_HideRequest;
             this.DataContext = this._mainWindowViewModel;
-            if (s_mainWindow != null) throw new InvalidOperationException("There can be only one main window!");
-            s_mainWindow = this;
+            if (_sMainWindow != null) throw new InvalidOperationException("There can be only one main window!");
+            _sMainWindow = this;
 
             this.IsVisibleChanged += MainWindow_IsVisibleChanged;
             this.Deactivated += MainWindow_Deactivated;
             this.MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
 
             this.LoadNotificationIcon();
-            this.TextBox.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(this.MainWindow_KeyDown), true);
+            this.TextBox.AddHandler(KeyDownEvent, new KeyEventHandler(this.MainWindow_KeyDown), true);
 
             this.UpdatePositionOnScreen();
             this.Loaded += (s,e) => this.SetupHotkey();
@@ -56,8 +45,8 @@ namespace Wooster
 
         public static IntPtr GetMainWindowHandle()
         {
-            if (s_mainWindow == null) return IntPtr.Zero;
-            return (IntPtr)s_mainWindow.Dispatcher.Invoke(new Func<IntPtr>(() => s_mainWindow._windowInteropHelper.Handle));
+            if (_sMainWindow == null) return IntPtr.Zero;
+            return (IntPtr)_sMainWindow.Dispatcher.Invoke(new Func<IntPtr>(() => _sMainWindow._windowInteropHelper.Handle));
         }
 
         private void SetupHotkey()
@@ -72,13 +61,13 @@ namespace Wooster
             this._hotkey.KeyCode = this._mainWindowViewModel.Config.HotkeyConfig.Key;
             this._hotkey.Pressed += Hotkey_Pressed;
             this._windowInteropHelper = new System.Windows.Interop.WindowInteropHelper(this);
-            if (!this._hotkey.GetCanRegister(this._windowInteropHelper.Handle))
+            if (!this._hotkey.GetCanRegister())
             {
-                Console.WriteLine("Whoops, looks like attempts to register will fail or throw an exception, show an error/visual user feedback");
+                Console.WriteLine(@"Whoops, looks like attempts to register will fail or throw an exception, show an error/visual user feedback");
             }
             else
             {
-                this._hotkey.Register(this._windowInteropHelper.Handle);
+                this._hotkey.Register();
             }
 
             this.Hide();
@@ -114,7 +103,7 @@ namespace Wooster
 
             if (e.Key == Key.Up)
             {
-                var newIdx = this.ListBoxActions.SelectedIndex-1;
+                var newIdx = this.ListBoxActions.SelectedIndex - 1;
                 if (newIdx < 0) newIdx = this.ListBoxActions.Items.Count - 1;
                 this.ListBoxActions.SelectedIndex = newIdx;
                 return;
@@ -123,7 +112,6 @@ namespace Wooster
             if (e.Key == Key.Enter)
             {
                 this._mainWindowViewModel.ExecuteActionCommand.Execute(null);
-                return;
             }
         }
 
@@ -208,7 +196,7 @@ namespace Wooster
 
         private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
         {
-            
+            Console.WriteLine("EEEE " + string.Join(", ",e.Changes.Select(o => o.AddedLength)));
         }
     }
 }

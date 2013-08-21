@@ -46,7 +46,8 @@ namespace Wooster.Classes.Actions
 
         private void Load()
         {
-            if (this.ShortcutPath == null)
+            // TODO: Remove shortcut if it does not exist!
+            if (this.ShortcutPath == null || !File.Exists(this.ShortcutPath))
             {
                 this.Icon = null;
                 this.Action = null;

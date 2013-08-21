@@ -17,32 +17,30 @@ namespace MovablePython
         [DllImport("user32.dll", SetLastError = true)]
         private static extern int UnregisterHotKey(IntPtr hWnd, int id);
 
-        private const uint WM_HOTKEY = 0x312;
+        private const uint WmHotkey = 0x312;
 
-        private const uint MOD_ALT = 0x1;
-        private const uint MOD_CONTROL = 0x2;
-        private const uint MOD_SHIFT = 0x4;
-        private const uint MOD_WIN = 0x8;
+        private const uint ModAlt = 0x1;
+        private const uint ModControl = 0x2;
+        private const uint ModShift = 0x4;
+        private const uint ModWin = 0x8;
 
-        private const uint ERROR_HOTKEY_ALREADY_REGISTERED = 1409;
+        private const uint ErrorHotkeyAlreadyRegistered = 1409;
 
         #endregion
 
-        private static int currentID;
-        private const int maximumID = 0xBFFF;
+        private static int _currentId;
+        private const int MaximumId = 0xBFFF;
 
-        private Keys keyCode;
-        private bool shift;
-        private bool control;
-        private bool alt;
-        private bool windows;
+        private Keys _keyCode;
+        private bool _shift;
+        private bool _control;
+        private bool _alt;
+        private bool _windows;
 
         [XmlIgnore]
-        private int id;
+        private int _id;
         [XmlIgnore]
-        private bool registered;
-        [XmlIgnore]
-        private IntPtr? handle;
+        private bool _registered;
 
         public event HandledEventHandler Pressed;
 
@@ -68,14 +66,14 @@ namespace MovablePython
         private void PreFilterMessage(ref MSG msg, ref bool handled)
         {
             // Only process WM_HOTKEY messages
-            if (msg.message != Hotkey.WM_HOTKEY)
+            if (msg.message != WmHotkey)
             {
-                handled = false;
+                //handled = false;
                 return;
             }
 
             // Check that the ID is our key and we are registerd
-            if (this.registered && (msg.wParam.ToInt32() == this.id))
+            if (this._registered && (msg.wParam.ToInt32() == this._id))
             {
                 // Fire the event and pass on the event if our handlers didn't handle it
                 handled = this.OnPressed();
@@ -94,16 +92,16 @@ namespace MovablePython
         public Hotkey Clone()
         {
             // Clone the whole object
-            return new Hotkey(this.keyCode, this.shift, this.control, this.alt, this.windows);
+            return new Hotkey(this._keyCode, this._shift, this._control, this._alt, this._windows);
         }
 
-        public bool GetCanRegister(IntPtr handle)
+        public bool GetCanRegister()
         {
             // Handle any exceptions: they mean "no, you can't register" :)
             try
             {
                 // Attempt to register
-                if (!this.Register(handle))
+                if (!this.Register())
                 { return false; }
 
                 // Unregister and say we managed it
@@ -116,10 +114,10 @@ namespace MovablePython
             { return false; }
         }
 
-        public bool Register(IntPtr handle)
+        public bool Register()
         {
             // Check that we have not registered
-            if (this.registered)
+            if (this._registered)
             { throw new NotSupportedException("You cannot register a hotkey that is already registered"); }
 
             // We can't register an empty hotkey
@@ -127,67 +125,65 @@ namespace MovablePython
             { throw new NotSupportedException("You cannot register an empty hotkey"); }
 
             // Get an ID for the hotkey and increase current ID
-            this.id = Hotkey.currentID;
-            Hotkey.currentID = Hotkey.currentID + 1 % Hotkey.maximumID;
+            this._id = _currentId;
+            _currentId = Hotkey._currentId + 1 % Hotkey.MaximumId;
 
             // Translate modifier keys into unmanaged version
-            uint modifiers = (this.Alt ? Hotkey.MOD_ALT : 0) | (this.Control ? Hotkey.MOD_CONTROL : 0) |
-                            (this.Shift ? Hotkey.MOD_SHIFT : 0) | (this.Windows ? Hotkey.MOD_WIN : 0);
+            uint modifiers = (this.Alt ? ModAlt : 0) | (this.Control ? ModControl : 0) |
+                            (this.Shift ? ModShift : 0) | (this.Windows ? ModWin : 0);
 
             // Register the hotkey
-            if (Hotkey.RegisterHotKey(handle, this.id, modifiers, keyCode) == 0)
+            if (RegisterHotKey(IntPtr.Zero, this._id, modifiers, this._keyCode) == 0)
             {
                 // Is the error that the hotkey is registered?
-                if (Marshal.GetLastWin32Error() == ERROR_HOTKEY_ALREADY_REGISTERED)
-                { return false; }
-                else
-                { throw new Win32Exception(); }
+                if (Marshal.GetLastWin32Error() == ErrorHotkeyAlreadyRegistered)
+                {
+                    return false;
+                }
+
+                throw new Win32Exception();
             }
 
             // Save the control reference and register state
-            this.registered = true;
-            this.handle = handle;
+            this._registered = true;
 
             // We successfully registered
             return true;
         }
-
+        
         public void Unregister()
         {
             // Check that we have registered
-            if (!this.registered)
+            if (!this._registered)
             { throw new NotSupportedException("You cannot unregister a hotkey that is not registered"); }
                         
             try
             {
                 // Clean up after ourselves
-                Hotkey.UnregisterHotKey(this.handle.Value, this.id);
+                UnregisterHotKey(IntPtr.Zero, this._id);
             }
-            catch (Exception) { /* who cares */ }
+            catch (Exception)
+            { /* who cares */ }
 
             // Clear the control reference and register state
-            this.registered = false;
-            this.handle = null;
+            this._registered = false;
         }
 
         private void Reregister()
         {
             // Only do something if the key is already registered
-            if (!this.registered)
+            if (!this._registered)
             { return; }
-
-            // Save control reference
-            var handle = this.handle;
-
+            
             // Unregister and then reregister again
             this.Unregister();
-            this.Register(handle.Value);
+            this.Register();
         }
 
         private bool OnPressed()
         {
             // Fire the event if we can
-            HandledEventArgs handledEventArgs = new HandledEventArgs(false);
+            var handledEventArgs = new HandledEventArgs(false);
             if (this.Pressed != null)
             { this.Pressed(this, handledEventArgs); }
 
@@ -202,8 +198,8 @@ namespace MovablePython
             { return "(none)"; }
 
             // Build key name
-            string keyName = Enum.GetName(typeof(Keys), this.keyCode); ;
-            switch (this.keyCode)
+            string keyName = Enum.GetName(typeof(Keys), this._keyCode);
+            switch (this._keyCode)
             {
                 case Keys.D0:
                 case Keys.D1:
@@ -225,13 +221,13 @@ namespace MovablePython
 
             // Build modifiers
             string modifiers = "";
-            if (this.shift)
+            if (this._shift)
             { modifiers += "Shift+"; }
-            if (this.control)
+            if (this._control)
             { modifiers += "Control+"; }
-            if (this.alt)
+            if (this._alt)
             { modifiers += "Alt+"; }
-            if (this.windows)
+            if (this._windows)
             { modifiers += "Windows+"; }
 
             // Return result
@@ -240,65 +236,65 @@ namespace MovablePython
 
         public bool Empty
         {
-            get { return this.keyCode == Keys.None; }
+            get { return this._keyCode == Keys.None; }
         }
 
         public bool Registered
         {
-            get { return this.registered; }
+            get { return this._registered; }
         }
 
         public Keys KeyCode
         {
-            get { return this.keyCode; }
+            get { return this._keyCode; }
             set
             {
                 // Save and reregister
-                this.keyCode = value;
+                this._keyCode = value;
                 this.Reregister();
             }
         }
 
         public bool Shift
         {
-            get { return this.shift; }
+            get { return this._shift; }
             set
             {
                 // Save and reregister
-                this.shift = value;
+                this._shift = value;
                 this.Reregister();
             }
         }
 
         public bool Control
         {
-            get { return this.control; }
+            get { return this._control; }
             set
             {
                 // Save and reregister
-                this.control = value;
+                this._control = value;
                 this.Reregister();
             }
         }
 
         public bool Alt
         {
-            get { return this.alt; }
+            get { return this._alt; }
             set
             {
                 // Save and reregister
-                this.alt = value;
+                this._alt = value;
                 this.Reregister();
             }
         }
 
         public bool Windows
         {
-            get { return this.windows; }
+            get { return this._windows; }
             set
             {
                 // Save and reregister
-                this.windows = value;
+                this._windows = value;
                 this.Reregister();
             }
         }
