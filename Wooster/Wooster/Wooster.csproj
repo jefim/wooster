@@ -164,6 +164,7 @@
     <Content Include="Deps\Microsoft.WindowsAPICodePack.dll" />
     <Content Include="Deps\Microsoft.WindowsAPICodePack.Shell.dll" />
     <Content Include="Deps\Microsoft.WindowsAPICodePack.ShellExtensions.dll" />
+    <SplashScreen Include="Graphics\splash.png" />
     <EmbeddedResource Include="Graphics\calculate.png" />
   </ItemGroup>
   <ItemGroup>

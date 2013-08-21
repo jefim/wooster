@@ -135,9 +135,9 @@ namespace Wooster.Classes
     {
         public HotkeyConfig()
         {
-            this.Alt = false;
+            this.Alt = true;
             this.Control = false;
-            this.Shift = true;
+            this.Shift = false;
             this.Win = false;
             this.Key = Keys.Space;
         }
