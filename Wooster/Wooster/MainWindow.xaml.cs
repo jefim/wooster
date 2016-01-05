@@ -196,7 +196,6 @@ namespace Wooster
 
         private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
         {
-            Console.WriteLine("EEEE " + string.Join(", ",e.Changes.Select(o => o.AddedLength)));
         }
     }
 }

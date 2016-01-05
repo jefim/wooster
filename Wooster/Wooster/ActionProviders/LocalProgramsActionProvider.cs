@@ -20,36 +20,38 @@ namespace Wooster.ActionProviders
 
         public IEnumerable<IAction> GetActions(string queryString)
         {
-            var outputActions = new List<IAction>();
-
-            // search by first letters
-            // @"\b{CHUNK1}.*\b"
-            // @"\b{CHUNK1}.*?\b{CHUNK2}.*\b"
-            var chunks = queryString.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            Regex regex = new Regex(string.Format(@"\b{0}.*\b", string.Join(@".*?\b", chunks)), RegexOptions.IgnoreCase);
-
-            this._cache.AllActions
+            var outputActions = this._cache.AllActions
                 .Where(o =>
                 {
-                    // search by contains
-                    if (o.AlwaysVisible || o.SearchableName.ToLower().Contains(queryString.ToLower())) return true;
-
-                    if (this._config.SearchByFirstLettersEnabled)
-                    {
-                        // search by first letters
-                        return regex.IsMatch(o.SearchableName);
-                    }
-                    else return false;
+                    return MatchesQueryString(queryString, o);
                 })
-                .Take(this._config.MaxActionsShown)
+                //.Take(this._config.MaxActionsShown)
                 .OrderBy(o => o.OrderHint)
                 .ThenBy(o => o.SearchableName)
-                .ToList()
-                .ForEach(o => outputActions.Add(o));
+                .ToList();
 
             return outputActions;
         }
 
+        internal bool MatchesQueryString(string queryString, Classes.Actions.WoosterAction woosterAction)
+        {
+            // search by contains
+            if (woosterAction.AlwaysVisible || 
+                woosterAction.SearchableName.ToLower().Contains(queryString.ToLower())) return true;
+
+            if (this._config != null && this._config.SearchByFirstLettersEnabled)
+            {
+                // search by first letters
+                // @"\b{CHUNK1}.*\b"
+                // @"\b{CHUNK1}.*?\b{CHUNK2}.*\b"
+                var chunks = queryString.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(o => Regex.Escape(o));
+                Regex regex = new Regex(string.Format(@"\b{0}.*\b", string.Join(@".*?\b", chunks)), RegexOptions.IgnoreCase);
+
+                // search by first letters
+                return regex.IsMatch(woosterAction.SearchableName);
+            }
+            else return false;
+        }
 
         public void RecacheData()
         {
