@@ -34,9 +34,8 @@ namespace Wooster.Utils
             {
                 return;
             }
-
-            var shell = new Shell32.Shell();
-            foreach (var window in shell.Windows())
+            
+            foreach (var window in this.GetShellWindows())
             {
                 if(!IsRealExplorerWindow(window)) continue;
 
@@ -63,14 +62,21 @@ namespace Wooster.Utils
             }
         }
 
-        public void GetExplorerSelectedFiles()
+        private dynamic GetShellWindows()
         {
-            if (_lastExplorerWindowPtr == IntPtr.Zero) { return; }
+            Type shellAppType = Type.GetTypeFromProgID("Shell.Application");
+            var shell = Activator.CreateInstance(shellAppType);
+            var windows = (dynamic)shellAppType.InvokeMember("Windows", System.Reflection.BindingFlags.InvokeMethod, null, shell, null);
+            return windows;
+        }
+
+        public IEnumerable<string> GetExplorerSelectedFiles()
+        {
+            if (_lastExplorerWindowPtr == IntPtr.Zero) { return new string[0]; }
             try
             {
                 var selected = new List<string>();
-                var shell = new Shell32.Shell();
-                foreach (var window in shell.Windows())
+                foreach (var window in this.GetShellWindows())
                 {
                     if (!IsRealExplorerWindow(window)) continue;
                     if (window.HWND == (int)_lastExplorerWindowPtr)
@@ -82,12 +88,14 @@ namespace Wooster.Utils
                         }
                     }
                 }
-                System.Windows.MessageBox.Show(string.Join("\r\n", selected));
+                return selected;
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(ex.ToString());
             }
+
+            return new string[0];
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]

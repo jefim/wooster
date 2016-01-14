@@ -67,6 +67,7 @@
     <Compile Include="ActionProviders\CalculatorActionProvider.cs" />
     <Compile Include="ActionProviders\CurrencyConverterActionProvider.cs" />
     <Compile Include="ActionProviders\LocalProgramsActionProvider.cs" />
+    <Compile Include="ActionProviders\MiscActionProvider.cs" />
     <Compile Include="Classes\Actions\ExecuteCommandAction.cs" />
     <Compile Include="Classes\Actions\PredefinedActions.cs" />
     <Compile Include="Classes\Actions\ProgramShortcutAction.cs" />
@@ -74,6 +75,8 @@
     <Compile Include="Classes\Config.cs" />
     <Compile Include="Classes\IAction.cs" />
     <Compile Include="Classes\IActionProvider.cs" />
+    <Compile Include="Lib\IPromptService.cs" />
+    <Compile Include="Lib\PromptService.cs" />
     <Compile Include="Utils\DialogService.cs" />
     <Compile Include="Classes\MainWindowViewModel.cs" />
     <Compile Include="Classes\Theme.cs" />

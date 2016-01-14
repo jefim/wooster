@@ -128,7 +128,6 @@
                              FontSize="{Binding Config.Theme.FontSize, FallbackValue=30}"
                              Padding="7"
                              Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}"
-                             TextChanged="TextBox_TextChanged_1"
                              Background="{Binding Config.Theme.BackgroundColor, FallbackValue=#EEEEEE}" />
                     <Button Style="{StaticResource SettingsButtonStyle}" />
                 </Grid>

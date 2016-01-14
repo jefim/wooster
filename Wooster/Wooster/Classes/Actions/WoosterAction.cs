@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using Wooster.Utils;
@@ -26,6 +27,26 @@ namespace Wooster.Classes.Actions
             this.Action = action;
             this._includeQueryInDisplayName = includeQueryInDisplayName;
             this.AlwaysVisible = alwaysVisible;
+        }
+
+        public bool MatchesQueryString(string queryString, bool searchByFirstLettersEnabled)
+        {
+            // search by contains
+            if (this.AlwaysVisible ||
+                this.SearchableName.ToLower().Contains(queryString.ToLower())) return true;
+
+            if (searchByFirstLettersEnabled)
+            {
+                // search by first letters
+                // @"\b{CHUNK1}.*\b"
+                // @"\b{CHUNK1}.*?\b{CHUNK2}.*\b"
+                var chunks = queryString.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(o => Regex.Escape(o));
+                Regex regex = new Regex(string.Format(@"\b{0}.*\b", string.Join(@".*?\b", chunks)), RegexOptions.IgnoreCase);
+
+                // search by first letters
+                return regex.IsMatch(this.SearchableName);
+            }
+            else return false;
         }
 
         [XmlIgnore]

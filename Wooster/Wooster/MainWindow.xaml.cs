@@ -193,9 +193,5 @@ namespace Wooster
         {
             if (this._hotkey.Registered) { this._hotkey.Unregister(); }
         }
-
-        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
-        {
-        }
     }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Wooster.ActionProviders;
 using Wooster.Classes.Actions;
+using Wooster.Lib;
 using Wooster.Utils;
 
 namespace Wooster.Classes
@@ -27,6 +28,7 @@ namespace Wooster.Classes
 
         public MainWindowViewModel()
         {
+            var windowsExplorerHelper = new WindowsExplorerHelper();
             this.Config = Config.Load();
             this.IsPopupOpen = false;
             this.AvailableActions = new ObservableCollection<IAction>();
@@ -34,6 +36,7 @@ namespace Wooster.Classes
             this._providers.Add(new LocalProgramsActionProvider());
             this._providers.Add(new CalculatorActionProvider());
             this._providers.Add(new CurrencyConverterActionProvider());
+            this._providers.Add(new MiscActionProvider(windowsExplorerHelper, new PromptService()));
             foreach (var provider in this._providers)
             {
                 provider.Initialize(this.Config);

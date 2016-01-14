@@ -23,34 +23,13 @@ namespace Wooster.ActionProviders
             var outputActions = this._cache.AllActions
                 .Where(o =>
                 {
-                    return MatchesQueryString(queryString, o);
+                    return o.MatchesQueryString(queryString, this._config != null && this._config.SearchByFirstLettersEnabled);
                 })
-                //.Take(this._config.MaxActionsShown)
                 .OrderBy(o => o.OrderHint)
                 .ThenBy(o => o.SearchableName)
                 .ToList();
 
             return outputActions;
-        }
-
-        internal bool MatchesQueryString(string queryString, Classes.Actions.WoosterAction woosterAction)
-        {
-            // search by contains
-            if (woosterAction.AlwaysVisible || 
-                woosterAction.SearchableName.ToLower().Contains(queryString.ToLower())) return true;
-
-            if (this._config != null && this._config.SearchByFirstLettersEnabled)
-            {
-                // search by first letters
-                // @"\b{CHUNK1}.*\b"
-                // @"\b{CHUNK1}.*?\b{CHUNK2}.*\b"
-                var chunks = queryString.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(o => Regex.Escape(o));
-                Regex regex = new Regex(string.Format(@"\b{0}.*\b", string.Join(@".*?\b", chunks)), RegexOptions.IgnoreCase);
-
-                // search by first letters
-                return regex.IsMatch(woosterAction.SearchableName);
-            }
-            else return false;
         }
 
         public void RecacheData()
